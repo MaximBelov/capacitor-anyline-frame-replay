@@ -1,0 +1,72 @@
+diff --git a/node_modules/io-anyline-cordova/Package.swift b/node_modules/io-anyline-cordova/Package.swift
+index d354dc2..9201f0b 100644
+--- a/node_modules/io-anyline-cordova/Package.swift
++++ b/node_modules/io-anyline-cordova/Package.swift
+@@ -16,9 +16,7 @@ let package = Package(
+     dependencies: [
+         // Cordova-iOS dependency (SPM support requires 8.0.0+)
+         .package(
+-            url: "https://github.com/apache/cordova-ios.git",
+-            from: "8.0.0"
+-        ),
++            url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.5.3"),
+         // Anyline SDK dependency
+         .package(
+             url: "https://github.com/Anyline/anyline-ocr-spm-module.git",
+@@ -29,7 +27,7 @@ let package = Package(
+         .target(
+             name: "io-anyline-cordova",
+             dependencies: [
+-                .product(name: "Cordova", package: "cordova-ios"),
++                .product(name: "Cordova", package: "capacitor-swift-pm"),
+                 .product(name: "AnylinePackage", package: "anyline-ocr-spm-module")
+             ],
+             path: "src/ios",
+diff --git a/node_modules/io-anyline-cordova/src/android/build.gradle b/node_modules/io-anyline-cordova/src/android/build.gradle
+index 76905b9..2618aa5 100644
+--- a/node_modules/io-anyline-cordova/src/android/build.gradle
++++ b/node_modules/io-anyline-cordova/src/android/build.gradle
+@@ -1,6 +1,9 @@
++// Gradle 9 runs Groovy 4, which no longer imports XmlSlurper by default.
++import groovy.xml.XmlSlurper
++
+ repositories {
+     google()
+-    jcenter()
++    mavenCentral()
+     maven { url 'https://mobile-sdk-android.anyline.io/release/' }
+     flatDir {
+         dirs 'libs'
+diff --git a/node_modules/io-anyline-cordova/src/android/io/anyline/cordova/AnylinePlugin.java b/node_modules/io-anyline-cordova/src/android/io/anyline/cordova/AnylinePlugin.java
+index 8b887ca..d27a2ec 100644
+--- a/node_modules/io-anyline-cordova/src/android/io/anyline/cordova/AnylinePlugin.java
++++ b/node_modules/io-anyline-cordova/src/android/io/anyline/cordova/AnylinePlugin.java
+@@ -127,11 +127,27 @@ public class AnylinePlugin extends CordovaPlugin
+     }
+     private void initAnylineSDK(String licenseKey, boolean enableOfflineCache) {
+         JSONObject wrapperSessionSdkInitializationRequestJson = LegacyPluginHelper
+-                .getWrapperSessionSdkInitializationRequestJson(licenseKey, enableOfflineCache, "www/assets");
++                .getWrapperSessionSdkInitializationRequestJson(licenseKey, enableOfflineCache, webAssetsPath());
+         WrapperSessionProvider.requestSdkInitialization(
+                 wrapperSessionSdkInitializationRequestJson.toString());
+     }
+ 
++    /**
++     * The APK folder the web assets are in, which the SDK resolves relative asset paths against: Capacitor packages them under
++     * public/, Cordova under www/.
++     */
++    private String webAssetsPath() {
++        try {
++            String[] capacitorAssets = cordova.getActivity().getAssets().list("public");
++            if (capacitorAssets != null && capacitorAssets.length > 0) {
++                return "public/assets";
++            }
++        } catch (java.io.IOException ignored) {
++            // Read as the Cordova layout.
++        }
++        return "www/assets";
++    }
++
+     @Override
+     public void onSdkInitializationResponse(@NotNull WrapperSessionSdkInitializationResponse initializationResponse) {
+         JSONObject json =

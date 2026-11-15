@@ -1,0 +1,53 @@
+name: iOS tests
+# The Swift of ios/. The Anyline SDK ships no macOS slice and no arm64 simulator slice, so the plugin layer cannot run on
+# a simulator of an arm64 runner: the core (reading the config, resolving an image path) is tested with `swift test` on
+# the Mac itself, the package is built for a generic iOS device, and so is the example app with the plugin installed the
+# way an app installs it, next to io-anyline-cordova, which takes the SDK from the same package.
+# Called by ci.yaml when something it covers changes, and for every push to main.
+on:
+  workflow_call:
+jobs:
+  core:
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: npm run test:ios
+  # The Swift of ios/Sources against capacitor-swift-pm and the Anyline SDK, built for a generic iOS device.
+  device:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+      - run: npm run verify:ios
+      - name: Stop what the build left running
+        if: always()
+        run: pkill -f '[x]codebuild' || true
+  # The plugin as an app sees it: the example app installs it from the repository (file:..), `cap sync` writes it into the
+  # app's Swift package, and xcodebuild builds the app for a generic iOS device without signing. Then the one Anyline SDK:
+  # the resolved graph holds anyline-ocr-spm-module once, and the app embeds one Anyline.framework.
+  app:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run build
+      - run: npm run example:ios:build
+      - name: The plugin is in the app's Swift package
+        run: grep -q 'CapacitorAnylineFrameReplay' example-app/ios/App/CapApp-SPM/Package.swift
+      - name: The app links one copy of the Anyline SDK
+        run: |
+          app=$(find build/example-ios/Build/Products -name 'App.app' -type d | head -1)
+          copies=$(find "$app" -name 'Anyline.framework' -type d | wc -l | tr -d ' ')
+          echo "Anyline.framework copies in $app: $copies"
+          [ "$copies" = "1" ]
+      - name: Stop what the build left running
+        if: always()
+        run: pkill -f '[x]codebuild' || true

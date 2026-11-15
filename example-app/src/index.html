@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Anyline Frame Replay</title>
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0" />
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 16px; padding-top: env(safe-area-inset-top); }
+      label, input, button { display: block; margin: 6px 0; font-size: 16px; }
+      input { width: 100%; box-sizing: border-box; }
+      pre { white-space: pre-wrap; font-size: 13px; background: #f3f3f3; padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Anyline Frame Replay</h1>
+      <p>
+        Opens a barcode scanner with io-anyline-cordova. With Frame Replay on, the scanner reads
+        <code>assets/fixtures/code128.png</code>, which encodes <code>EXAMPLE-0001</code>, instead of the camera.
+      </p>
+      <label for="licence">Anyline licence key for com.example.plugin</label>
+      <input id="licence" autocomplete="off" />
+      <button id="init">Initialise the SDK</button>
+      <button id="set">Frame Replay on</button>
+      <button id="clear">Frame Replay off</button>
+      <button id="scan">Scan</button>
+      <pre id="log"></pre>
+    </main>
+    <script src="./js/example.js" type="module"></script>
+  </body>
+</html>

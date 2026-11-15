@@ -1,0 +1,5 @@
+{
+  "appId": "com.example.plugin",
+  "appName": "Anyline Frame Replay",
+  "webDir": "dist"
+}
