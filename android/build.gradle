@@ -64,5 +64,5 @@ dependencies {
     compileOnly "io.anyline:anylinesdk:$anylineSdkVersion"
     testImplementation "junit:junit:$junitVersion"
     // Android's own org.json is a stub on the JVM; the tests read real JSON.
-    testImplementation 'org.json:json:20250517'
+    testImplementation 'org.json:json:20260814'
 }
