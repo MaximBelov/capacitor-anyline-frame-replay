@@ -1,6 +1,6 @@
 {
   "name": "capacitor-anyline-frame-replay",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Feeds the Anyline scanner from images instead of the camera, through the Anyline SDK's own Frame Replay, so a scan can be tested without a camera or a real code",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
