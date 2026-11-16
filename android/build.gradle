@@ -3,7 +3,7 @@ ext {
     androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.7.1'
     // The Anyline SDK is compiled against, not shipped: the app's Anyline wrapper (io-anyline-cordova) brings it, and
     // its version is the one in the APK. An app can name the version it uses as `anylineSdkVersion` in variables.gradle.
-    anylineSdkVersion = project.hasProperty('anylineSdkVersion') ? rootProject.ext.anylineSdkVersion : '56.6.0'
+    anylineSdkVersion = project.hasProperty('anylineSdkVersion') ? rootProject.ext.anylineSdkVersion : '56.7.0'
 }
 
 buildscript {
