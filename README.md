@@ -37,7 +37,7 @@ The plugin brings no Anyline SDK of its own; it uses the one the app's wrapper b
   package, so the app links one `Anyline.xcframework`, at the version the app's `Package.resolved` pins. The lower bound
   is 56.0.0. With CocoaPods the plugin depends on the `Anyline` pod, likewise without an upper bound.
 - **Android**: the plugin compiles against `io.anyline:anylinesdk` and packages none of it (`compileOnly`), so the APK
-  carries the wrapper's copy. It compiles against 56.6.0 unless the app's `variables.gradle` sets `anylineSdkVersion`.
+  carries the wrapper's copy. It compiles against 56.7.0 unless the app's `variables.gradle` sets `anylineSdkVersion`.
   Without a wrapper in the app, `set()` fails at run time with a missing class.
 
 ## Images
